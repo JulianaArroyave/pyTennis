@@ -7,7 +7,7 @@ class houghModel():
     def get_error(hough_pred, y_true):
         pass
 
-    def __init__(self, canny_threshold1 = 50, canny_threshold2 = 50,
+    def __init__(self, canny_threshold1 = 20, canny_threshold2 = 20,
                 hough_rho = 1, hough_theta = 1, hough_threshold = 150):
         
         self.canny_thr1 = canny_threshold1
@@ -15,7 +15,6 @@ class houghModel():
         self.hough_r = hough_rho
         self.hough_t = hough_theta
         self.hough_thr = hough_threshold
-        self.hough_arr = []
         self.img_arr = []
  
     def make_gray(self, img):
@@ -26,8 +25,9 @@ class houghModel():
                                 self.canny_thr2)
     
     def find_hough_stimation(self, img_edges):
-        self.hough_arr.append(cv2.HoughLines(img_edges, self.hough_r, 
-                                            self.hough_t, self.hough_thr))
+        self.hough_arr = cv2.HoughLines(img_edges, self.hough_r, 
+                                            self.hough_t, self.hough_thr)
+        return  self.hough_arr
 
     def fit(self, img):
         self.img_arr.append(img)
@@ -37,17 +37,18 @@ class houghModel():
         self.img_canny =  self.apply_canny(self.img_gray)
         
         #Found lines with Hough
-        self.hough_arr.append(self.find_hough_stimation(self.img_canny))
-
+        result = self.find_hough_stimation(self.img_canny)
+        print(result)
 
     def predict(self):
 
         output_img = []
         output_lines = []
-        for line_pred, or_img in zip(self.img_arr, self.hough_arr):
+        for or_img, line_pred in zip(self.img_arr, self.hough_arr):
             aux_arr = []
+            
             for line in line_pred:
-                rho,theta = line[0]
+                rho,theta = line
                 a = np.cos(theta)
                 b = np.sin(theta)
                 x0 = a*rho
@@ -65,3 +66,4 @@ class houghModel():
             output_lines.append(aux_arr)
 
         return output_img, output_lines
+
