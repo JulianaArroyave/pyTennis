@@ -3,6 +3,8 @@ import typing as t
 from operator import methodcaller
 from ast import literal_eval
 
+label_dict = {}
+
 def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
     cleaning_fn = _chain(
         [
@@ -34,23 +36,31 @@ def _fix_image_column(df):
 
 def _fix_label(df):
 
-    def _convert_mask_to_line(line):
-        points = line[0]['points']
-        label = line[0]['polygonlabels'][0]
-        x0 = min([points[0][0], points[1][0]]) + abs(points[0][0] - points[1][0])
-        x1 = min(points[2][0], points[3][0]) + abs(points[2][0] - points[3][0])
+    def _convert_mask_to_line(lines):
+        output = []
+        for line in lines:
+            points = line['points']
+            label = line['polygonlabels'][0]
+            x0 = min([points[0][0], points[1][0]]) + abs(points[0][0] - points[1][0])
+            x1 = min(points[2][0], points[3][0]) + abs(points[2][0] - points[3][0])
 
-        y0 = min(points[0][1],points[1][1]) + abs(points[0][1] - points[1][1])
-        y1 = min(points[2][1],points[3][1]) + abs(points[2][1] - points[3][1])
+            y0 = min(points[0][1],points[1][1]) + abs(points[0][1] - points[1][1])
+            y1 = min(points[2][1],points[3][1]) + abs(points[2][1] - points[3][1])
 
-        if x0 > x1 or y0 > y1:
-            x1, x0 = x0, x1
-            y1, y0 = y0, y1
+            if x0 > x1 or y0 > y1:
+                x1, x0 = x0, x1
+                y1, y0 = y0, y1
 
-        return (x0, y0, x1, y1)
+            output.append(x0, y0, x1, y1)
+
+        return output
     
-    def _get_tag(line):
-        return line[0]['polygonlabels'][0]
+    def _get_tag(lines):
+        output = []
+        for line in lines:
+            output.append(line[0]['polygonlabels'][0])
+
+        return output
     
     df['coords'] = df.label.map(_convert_mask_to_line)
     df['tag'] = df.label.map(_get_tag)
