@@ -41,7 +41,7 @@ def _drop_useless(df):
 def _fix_image_column(df):
 
     new_img = df['image'].map(methodcaller('split', "/"))
-    df['image'] = ['image/' + x[-1] for x in new_img.values]
+    df['image'] = ['data/' + x[-1] for x in new_img.values]
 
     return df
 
