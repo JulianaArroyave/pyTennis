@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-class hougHModel():
+class houghModel():
 
     @classmethod
     def get_error(hough_pred, y_true):

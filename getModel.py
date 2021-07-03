@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.keras.layers import *
+from tensorflow.keras.layers import * 
 
 def conv_block(input, num_filters):
     x = Conv2D(num_filters, 3, padding="same")(input)
@@ -23,7 +23,7 @@ def decoder_block(input, skip_features, num_filters):
     x = conv_block(x, num_filters)
     return x
 
-def getUNetModel(input_shape):
+def get_unet_model(input_shape):
 
     inputs = Input(input_shape)
 
