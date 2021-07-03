@@ -1,11 +1,38 @@
 import cv2
 import numpy as np
+from math import isclose
 
 class houghModel():
 
     @classmethod
     def get_error(hough_pred, y_true):
-        pass
+        dist_min = 1000
+        position = []
+
+        x1, y1, x2, y2 = tuple(y_true)
+
+        slope_r = (y1 - y2)/(x1 -x2)
+        y = np.sqrt((y1-y2)**2)/2
+        x = np.sqrt((x1 - x2)**2)/2
+
+        for i in hough_pred[i]:
+            
+            x1_p = hough_pred[i][0]
+            y1_p = hough_pred[i][1]
+            x2_p = hough_pred[i][2]
+            y2_p = hough_pred[i][3]
+
+            x_p = np.sqrt((x2_p - x1_p)**2)/2
+            y_p = np.sqrt((y2_p - y1_p)**2)/2
+
+            slope_p = (y1_p - y1_p)/(x1_p - x2_p)
+
+
+            dist = np.sqrt((x-x_p)*2 + (y-y_p)*2)
+
+            if dist < dist_min and (isclose(slope_r, slope_p, abs_tol=10**-5)):
+                dist_min = dist
+                position.append(i)
 
     def __init__(self, canny_threshold1 = 20, canny_threshold2 = 20,
                 hough_rho = 1, hough_theta = 1, hough_threshold = 150):
