@@ -3,11 +3,10 @@ import typing as t
 from operator import methodcaller
 from ast import literal_eval
 
-label_dict = {}
-
 def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
     cleaning_fn = _chain(
         [
+            _eliminate_not_well_tagged,
             _drop_useless,
             _fix_image_column,
             _fix_label
@@ -23,6 +22,18 @@ def _chain(functions: t.List[t.Callable[[pd.DataFrame], pd.DataFrame]]):
         return df
 
     return helper
+
+def _eliminate_not_well_tagged(df):
+    print(df.shape)
+    for idx, row in df.iterrows():
+        lines = row.label
+        for line in lines:
+            if(len(line['points'])) != 4:
+                df.drop(idx, inplace = True)
+                break
+        
+    print(df.shape)
+    return df
 
 def _drop_useless(df):
    return df.drop(['id', 'annotator', 'annotation_id'], axis = 1)
@@ -51,17 +62,17 @@ def _fix_label(df):
                 x1, x0 = x0, x1
                 y1, y0 = y0, y1
 
-            output.append(x0, y0, x1, y1)
+            output.append((x0, y0, x1, y1))
 
         return output
     
     def _get_tag(lines):
         output = []
         for line in lines:
-            output.append(line[0]['polygonlabels'][0])
+            output.append(line['polygonlabels'][0])
 
         return output
-    
+ 
     df['coords'] = df.label.map(_convert_mask_to_line)
     df['tag'] = df.label.map(_get_tag)
     
