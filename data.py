@@ -68,10 +68,11 @@ def _get_file_name(full_path, dataset: pd.DataFrame):
     dataset['image'] = full_path + dataset.image.apply(_regex_search)
     return dataset
 
-def build_sources(data_dir, image_size = 572,mode = 'train'):
+def build_sources(data_dir, image_size = 512,mode = 'train'):
     #Debe retornar un dataframe con la estrustura[path_img, img, mask]
     datasets_names = os.listdir(data_dir)
     for dataset in datasets_names:
+        print(dataset)
         full_dataset_path = os.path.join(data_dir, dataset)
         ann_list = [ file for file in os.listdir(
             full_dataset_path) if file.endswith('csv')]
