@@ -38,8 +38,7 @@ def _chain(functions: t.List[t.Callable[[pd.DataFrame], pd.DataFrame]]):
     return helper
 
 def _drop_useless(df):
-   return df.drop(['id', 'annotator', 'annotation_id',
-        'created_at', 'updated_at', 'lead_time'], axis = 1)
+   return df.drop(['id', 'annotator', 'annotation_id'], axis = 1)
 
 def _string_to_list(df: pd.DataFrame):  
     new_dict = df.label.apply(literal_eval)
@@ -71,6 +70,7 @@ def _get_file_name(full_path, dataset: pd.DataFrame):
 def build_sources(data_dir, image_size = 512,mode = 'train'):
     #Debe retornar un dataframe con la estrustura[path_img, img, mask]
     datasets_names = os.listdir(data_dir)
+    clean_ann = pd.DataFrame()
     for dataset in datasets_names:
         print(dataset)
         full_dataset_path = os.path.join(data_dir, dataset)
@@ -78,12 +78,12 @@ def build_sources(data_dir, image_size = 512,mode = 'train'):
             full_dataset_path) if file.endswith('csv')]
             
         for ann in ann_list:
-            ann_df = pd.read_csv(os.path.join(full_dataset_path, ann))
-            clean_ann = _prepare_dataset(ann_df, full_dataset_path)
+            ann_df = pd.read_csv(os.path.join(full_dataset_path, ann), sep=';')
+            clean_aux = _prepare_dataset(ann_df, full_dataset_path)
             fn_pre = partial(_preprocess_image, image_size)
-            clean_ann['img'] = clean_ann.image.apply(fn_pre)
-            clean_ann['mask'] = list(_create_masks(clean_ann, image_size).values())
-
+            clean_aux['img'] = clean_aux.image.apply(fn_pre)
+            clean_aux['mask'] = list(_create_masks(clean_aux, image_size).values())
+        clean_ann = clean_ann.append(clean_aux)
     return clean_ann
 
 def im_show_three(dataset: pd.DataFrame, title = True):
