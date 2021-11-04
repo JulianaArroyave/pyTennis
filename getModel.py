@@ -23,7 +23,7 @@ def decoder_block(input, skip_features, num_filters):
     x = conv_block(x, num_filters)
     return x
 
-def get_unet_model(input_shape):
+def get_unet_model(input_shape, num_classes):
 
     inputs = Input(input_shape)
 
@@ -39,7 +39,7 @@ def get_unet_model(input_shape):
     d3 = decoder_block(d2, s2, 128)
     d4 = decoder_block(d3, s1, 64)
 
-    outputs = Conv2D(1, 1, padding="same", activation="sigmoid")(d4)
+    outputs = Conv2D(num_classes, 1, padding="same", activation="softmax")(d4)
 
     model = tf.keras.Model(inputs, outputs, name="U-Net")
 
