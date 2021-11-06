@@ -67,7 +67,7 @@ def _get_file_name(full_path, dataset: pd.DataFrame):
     dataset['image'] = full_path + dataset.image.apply(_regex_search)
     return dataset
 
-def build_sources(data_dir, image_size = 512,mode = 'train'):
+def build_sources(data_dir, image_size = 512,mode = 'train', gray = False):
     #Debe retornar un dataframe con la estrustura[path_img, img, mask]
     datasets_names = os.listdir(data_dir)
     clean_ann = pd.DataFrame()
@@ -84,6 +84,8 @@ def build_sources(data_dir, image_size = 512,mode = 'train'):
             clean_aux['img'] = clean_aux.image.apply(fn_pre)
             clean_aux['mask'] = list(_create_masks(clean_aux, image_size).values())
         clean_ann = clean_ann.append(clean_aux)
+        if gray:
+            clean_aux['img'] = clean_aux.img.apply(lambda x: cv2.cvtColor(x, cv2.COLOR_BGR2GRAY))
     return clean_ann
 
 def im_show_three(dataset: pd.DataFrame, title = True):
@@ -185,4 +187,3 @@ def _create_masks(df: pd.DataFrame, img_size):
         output_df[row[1].image] = mask
 
     return output_df
-   
