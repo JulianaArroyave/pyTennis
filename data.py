@@ -84,8 +84,9 @@ def build_sources(data_dir, image_size = 512,mode = 'train', gray = False):
             clean_aux['img'] = clean_aux.image.apply(fn_pre)
             clean_aux['mask'] = list(_create_masks(clean_aux, image_size).values())
         clean_ann = clean_ann.append(clean_aux)
-        if gray:
-            clean_aux['img'] = clean_aux.img.apply(lambda x: cv2.cvtColor(x, cv2.COLOR_BGR2GRAY))
+
+    if gray:
+        clean_ann['img'] = clean_ann.img.apply(lambda x: cv2.cvtColor(x, cv2.COLOR_BGR2GRAY))
     return clean_ann
 
 def im_show_three(dataset: pd.DataFrame, title = True):
