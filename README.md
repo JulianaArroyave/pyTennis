@@ -1,4 +1,4 @@
-[![Open In Colab](https://colab.research.google.com/drive/1KO_C5S8KDz2hfMWQrU5uHxnpTWEpn2Gb?usp=sharing)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1KO_C5S8KDz2hfMWQrU5uHxnpTWEpn2Gb?usp=sharing)
 
 
 # pyTennis
