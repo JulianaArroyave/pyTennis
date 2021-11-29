@@ -5,7 +5,7 @@
 Proyecto de Seminario y Monografía de la especializacion en analitica y ciencia de datos
 
 Estudiantes:
-- Juliana Monsalve
+- Juliana Arroyave
 - Alejandro Echavarria
 
 ## Objetivo General
